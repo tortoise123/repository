@@ -1,0 +1,109 @@
+======JDBC========
+1.什么是JDBC,有什么作用
+   Java DataBase Connectivity 简称JDBC.
+被称为Java数据库访问
+   JDBC是用于Java程序访问数据库的技术.
+   JDBC是一个标准,主要由一系列的接口构成.
+数据库开发商提供实现类,以(驱动包)jar
+形式提供.
+   JDBC技术为开发者提供统一的数据库操作
+模式.数据库开发商提供的实现包具体细节,
+不需要开发者关心.开发者只需要关注接口及其
+方法的作用.
+
+public interface IA{
+   public void f1();
+}
+
+public class OracleA implements IA{
+   public void f1(){
+       //实现与oracle数据库底层连接
+   }
+}
+
+public class MysqlA implements IA{
+   public void f1(){
+       //实现与mysql数据库底层连接
+   }
+}
+
+IA a = ...(OracleA)
+a.f1();//连接Oracle
+IA a = ...(MysqlA)
+a.f1();//连接mysql
+
+2.如何使用和学习JDBC
+   --下载和导入数据库的驱动包
+   -- 熟悉JDBC技术的API (java.sql.*)
+    a. Connection (连接)
+     代表与数据库的一个连接.
+     由于连接资源有限,用完后必须确保释放掉.
+     采用finally{}控制关闭.
+    b. Statement  (SQL执行器)
+      用于执行SQL语句的.利用Statement提供的
+     方法向数据库发送SQL命令并执行返回结果.
+        executeUpdate(sql);//执行增删改SQL
+        executeQuery(sql);//执行查询SQL
+        execute(sql);//执行DDL,建表删表语句
+    c. ResultSet  (查询SQL返回的结果)
+        封装了select语句返回的结果集.
+getInt("empno");//获取empno字段值,以int类型返回
+getString("ename");//获取ename字段值,以String类型返回
+getXXX();//
+
+===================
+Connection con = ...;
+Statement stat = con.createStatement();
+ResultSet rs = stat.executeQuery(sql);//查询
+//利用rs.getInt(),getString()方法取结果
+===================
+
+3.使用入门
+   a.DML操作步骤:
+   --引入数据库驱动包ojdbc6.jar
+----------编码-------------
+   --注册驱动(加载驱动包资源)
+   --指定用户名,密码,数据库连接字符串
+   --获取Connection连接
+   --获取Statement对象
+   --将insert ,update,delete DML语句
+      给executeUpdate(sql)执行
+   --释放Connection连接资源
+  
+  b.DQL操作步骤:
+    --引入数据库驱动包ojdbc6.jar
+----------编码-------------
+   --注册驱动(加载驱动包资源)
+   --指定用户名,密码,数据库连接字符串
+   --获取Connection连接
+   --获取Statement对象
+   --拼写一个select语句,使用executeQuery(sql)执行
+   --返回ResultSet结果集对象,遍历访问该结果集
+      next():将游标指针向下移动一行,
+               有记录移动成功返回true;
+               没有记录移动失败返回false;
+      getInt(),getString():获取指针指向记录的
+      某个字段值
+   --释放资源connection,statement,resultset
+
+public class T4CConnection 
+implements Connection{
+   public Statement createStatement(){
+      //.......
+  }
+}
+
+
+查看约束作用在哪个字段:
+查看user_cons_columns系统表
+//查询部门平均工资大于1500
+//统计员工工资小于等于1000的人数，
+//在1000～2000的人数，2000～5000的人数，
+//和大于5000的人数
+select sum(case when sal<=1000 then 1 else 0 end) "1000以下",
+sum(case when sal>1000 and sal<=2000 then 1 else 0 end) "1000~2000",
+sum(case when sal>2000 and sal<=5000 then 1 else 0 end) "2000~5000",
+sum(case when sal>5000 then 1 else 0 end) "5000以上"
+from emp;
+
+

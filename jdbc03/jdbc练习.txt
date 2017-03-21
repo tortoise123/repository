@@ -1,0 +1,22 @@
+==========作业===========
+电信计费系统,有一个资费表COST,该表定义如下：
+ID                        NOT NULL NUMBER(4)
+NAME                      NOT NULL VARCHAR2(50)
+BASE_DURATION                      NUMBER(11)
+BASE_COST                          NUMBER(7,2)
+UNIT_COST                          NUMBER(7,4)
+STATUS                             CHAR(1)
+DESCR                              VARCHAR2(100)
+CREATIME                           DATE
+STARTIME                           DATE
+COST_TYPE                          CHAR(1)
+
+针对上述COST表编写一个DAO组件，实现以下基本功能
+findById:按ID主键作条件查询,查询一行记录
+save(Cost cost):将cost对象插入到COST表
+update(Cost cost):将cost对象更新到COST表,
+按ID做条件更新
+deleteById(int id):按ID做条件删除一行记录
+findAll:查询所有COST记录
+findByPage(int page,int pageSize):按ID排序,
+实现分页查询

@@ -1,0 +1,70 @@
+1.PreparedStatement使用
+2.DbUtil工具类的封装
+   properties文件类型,属于文本文件,内容格式
+符合key=value键值对结构.(Java也称为资源
+文件)
+  java.util.Properties 该类可以加载和解析
+properties文件.
+  Properties.load(InputStream inStream);//加载
+  Properties.getProperty(key);//根据key获取value值
+  //加载src目录下的db.properties文件,
+//以InputStream类型返回
+  InputStream inStream = 
+      ClassLoader.getResourceAsStream(
+     "db.properties");
+3.事务控制
+   在sqlplus,sqldeveloper工具中,执行
+insert,update,delete语句,需要commit一下才能
+将操作影响到表记录.(没有自动提交事务)
+    在JDBC使用中,打开了自动提交事务功能.
+默认开启,每次执行exeucteUpdate(sql);就会默认
+commit提交一下.
+try{
+     con.setAutoCommit(false);//关闭默认提交
+     pst1 = con.PrepareStatement();//执行DML1操作
+     pst2 = con.PrepareStatement();//执行DML2操作
+ //使用pst1,pst2执行dml操作,属于同一个事务控制
+     con.commit();提交事务
+}catch(){
+     con.rollback();
+}
+==========================
+4.批处理操作
+  可以一次性向数据库发送多条SQL语句执行.
+  1)Statement的使用(可以执行混合操作)
+     statement.addBatch(sql);//将sql放入批中
+     statement.executeBatch();//发送批中的SQL执行
+     statement.clearBatch();//清除批中的SQL
+  2)PreparedStatement的使用(只能执行某一种操作)
+     pst = con.prepareStatement(sql);//指定某中操作
+     //设置?参数,然后调用addBatch();
+     pst.addBatch();//将该组参数放入批中
+     pst.executeBatch();//发送批中多组参数执行
+
+  3)批处理的事务使用
+    批处理中的sql,每次执行默认都会自动提交;
+如果遇到错误,会影响后续sql的执行,
+前面sql可以顺利执行.
+     批处理操作会产生部分成功,部分失败.如果
+需要将批处理中的sql操作当作一个整体,需要
+使用前面事务控制.
+
+5.使用DAO模式封装数据库操作
+   1)什么是DAO模式
+   Data Access Object被称为数据访问对象.主要
+封装了对数据表的增删改查操作.
+EmpDao-->提供了对Emp表的增删改查操作
+DeptDao-->提供了对Dept表的增删改查操作
+   2)实体类(POJO类)
+    实体类与表字段结构对应.
+   一个实体类对象与一行表记录对应.
+   3)编写DAO组件的步骤
+    --首先根据数据表编写实体类
+    --然后定义DAO组件接口和方法
+    --最后编写DAO组件实现
+
+
+
+
+
+
